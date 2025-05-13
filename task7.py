@@ -7,7 +7,7 @@ spark.sparkContext.setLogLevel("ERROR")
 
 schema = StructType([
     StructField("user_id", StringType()),
-    StructField("event_type", StringType()),  # view, cart, purchase
+    StructField("event_type", StringType()),  
     StructField("timestamp", TimestampType()),
     StructField("product_id", StringType()),
     StructField("category", StringType()),
@@ -17,10 +17,9 @@ schema = StructType([
 stream = (
     spark.readStream
          .schema(schema)
-         .json("data/stream")  # <-- folder z danymi
+         .json("data/stream")
 )
 
-# 🧠 Segmentacja per użytkownik w 5-minutowym tumbling window
 segmented = (
     stream.withWatermark("timestamp", "1 minute")
           .groupBy(window("timestamp", "5 minutes"), col("user_id"))
